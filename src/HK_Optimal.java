@@ -29,8 +29,8 @@ import static java.lang.Math.atan2;
 public class HK_Optimal {
 
     /* ----------------------------- GLOBAL VARIABLES ------------------------------ */
-    private static int[][] distances;
-    private static int optimalDistance = Integer.MAX_VALUE;
+    private static double[][] distances;
+    private static double optimalDistance = Integer.MAX_VALUE;
     private static String optimalPath = "";
 
 
@@ -55,14 +55,14 @@ public class HK_Optimal {
         stations[4] = s4;
 
         //System.out.println(calculateDistance(s1.getX(), s1.getY(), s2.getX(), s2.getY()));
-        int[][] matrix = new int[5][5];
+        double[][] matrix = new double[5][5];
 
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
                 if (i == j) {
                     matrix[i][j] = 0;
                 } else {
-                    matrix[i][j] = (int) calculateDistance(stations[i].getX(), stations[i].getY(), stations[j].getX(), stations[j].getY());
+                    matrix[i][j] = calculateDistance(stations[i].getX(), stations[i].getY(), stations[j].getX(), stations[j].getY());
                 }
             }
         }
@@ -94,7 +94,7 @@ public class HK_Optimal {
         int size = input.nextInt();
 
         // Distances array is initiated considering the size of the matrix
-        distances = new int[size][size];
+        distances = new double[size][size];
 
         // The file in that location is opened
         FileReader f = new FileReader(file);
@@ -127,7 +127,7 @@ public class HK_Optimal {
         }
 
         // FIRST CALL TO THE RECURSIVE FUNCTION
-        procedure(0, vertices, path, 0);
+        procedure(0, vertices, path, 0.0);
 
         System.out.print("Path: " + optimalPath + ". Distance = " + optimalDistance);
     }
@@ -139,12 +139,12 @@ public class HK_Optimal {
 
     /* ------------------------------- RECURSIVE FUNCTION ---------------------------- */
 
-    private static int procedure(int initial, int vertices[], String path, int costUntilHere) {
+    private static double procedure(int initial, int vertices[], String path, double costUntilHere) {
 
         // We concatenate the current path and the vertex taken as initial
-        path = path + Integer.toString(initial) + " - ";
+        path = path + Double.toString(initial) + " - ";
         int length = vertices.length;
-        int newCostUntilHere;
+        double newCostUntilHere;
 
 
         // Exit case, if there are no more options to evaluate (last node)
@@ -170,8 +170,8 @@ public class HK_Optimal {
         else {
 
             int[][] newVertices = new int[length][(length - 1)];
-            int costCurrentNode, costChild;
-            int bestCost = Integer.MAX_VALUE;
+            double costCurrentNode, costChild;
+            double bestCost = Double.MAX_VALUE;
 
             // For each of the nodes of the list
             for (int i = 0; i < length; i++) {
@@ -197,7 +197,7 @@ public class HK_Optimal {
                 costChild = procedure(vertices[i], newVertices[i], path, newCostUntilHere);
 
                 // The cost of every child + the current node cost is computed
-                int totalCost = costChild + costCurrentNode;
+                double totalCost = costChild + costCurrentNode;
 
                 // Finally we select from the minimum from all possible children costs
                 if (totalCost < bestCost) {
@@ -258,10 +258,10 @@ public class HK_Optimal {
         if (dYY == 0) {
             if (stations[to].getX() < stations[from].getX()) {
                 angle = 90.0;
-                System.out.println("Counter clockwise");
+                System.out.print("Counter clockwise: ");
             } else if (stations[to].getX() > stations[from].getX()) {
                 angle = -90.0;
-                System.out.println("Clockwise");
+                System.out.print("Clockwise: ");
 
             }
             System.out.println(angle);
@@ -274,7 +274,8 @@ public class HK_Optimal {
             dXX = abs(stations[to].getX() - stations[from].getX());
             dYY = abs(stations[to].getY() - stations[from].getY());
             angle = Math.toDegrees(Math.atan2(dXX, dYY));
-           // angle = 90 - angle;
+            // angle = 90 - angle;
+            System.out.print("Clockwise: ");
         }
 
         if (dXX > 0 && dYY < 0) {
@@ -282,12 +283,14 @@ public class HK_Optimal {
             dYY = abs(stations[to].getY() - stations[from].getY());
             angle = Math.toDegrees(Math.atan2(dYY, dXX));
             angle = 90 + angle;
+            System.out.print("Clockwise: ");
         }
 
         if (dXX < 0 && dYY > 0) {
             dXX = abs(stations[to].getX() - stations[from].getX());
             dYY = abs(stations[to].getY() - stations[from].getY());
             angle = Math.toDegrees(Math.atan2(dXX, dYY));
+            System.out.print("Counter clockwise: ");
         }
 
         if (dXX < 0 && dYY < 0) {
@@ -295,7 +298,9 @@ public class HK_Optimal {
             dYY = abs(stations[to].getY() - stations[from].getY());
             angle = Math.toDegrees(Math.atan2(dXX, dYY));
             angle = 180 - angle;
+            System.out.print("Counter clockwise: ");
         }
+
 
 
        /* if(stations[0].getX() < stations[2].getX()){
